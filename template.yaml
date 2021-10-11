@@ -5,7 +5,7 @@ Description: Application that establishes an API suited for working with documen
 # Metadata to use for the publishing to the SAR
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: thetis-ims-multi-picking
+    Name: thetis-ims-document-api
     Description: Application that establishes an API suited for working with documents.
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
