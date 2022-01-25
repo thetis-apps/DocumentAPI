@@ -3,17 +3,17 @@ Transform: AWS::Serverless-2016-10-31
 Description: Application that establishes an API suited for working with documents
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: thetis-ims-document-api
-    Description: Application that establishes an API suited for working with documents.
+    Name: thetis-ims-yarnliving
+    Description: Application that contains resources specific to Yarnliving
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
     LicenseUrl: ../../LICENSE.txt
     ReadmeUrl: ../../README.md
     Labels:
     - thetis-ims
-    HomePageUrl: https://github.com/thetis-apps/DocumentApi
+    HomePageUrl: https://github.com/thetis-apps/Yarnliving
     SemanticVersion: '0.0.1'
-    SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
+    SourceCodeUrl: https://github.com/thetis-apps/Yarnliving
 Globals:
   Function:
     Timeout: 3

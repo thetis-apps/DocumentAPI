@@ -2,9 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "TestDocumentApi"
+stack_name = "TestYarnliving"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3"
-s3_prefix = "TestDocumentApi"
+s3_prefix = "TestYarnliving"
 region = "eu-west-1"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "FrontendUrl=\"https://capida.thetis-apps.net\" ContextId=\"550\" ClientId=\"ThetisClientId\" ClientSecret=\"ThetisClientSecret\" ApiKey=\"b495480a-181c-4608-ab12-d72977776395\" DevOpsEmail=\"lmp@thetis-apps.com\""
+parameter_overrides = "FrontendUrl=\"https://yarnliving.thetis-apps.net\" ContextId=\"550\" ClientId=\"ThetisClientId\" ClientSecret=\"ThetisClientSecret\" ApiKey=\"b495480a-181c-4608-ab12-d72977776395\" DevOpsEmail=\"lmp@thetis-apps.com\""

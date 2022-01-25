@@ -1,3 +1,5 @@
-# Document API
+# Yarnliving
 
-This application establishes a Graph QL like interface for the development of client applications supporting work according to documents (picking list, multi picking lists, stock taking lists).
+This application contains the backend of the application made for Yarnliving.
+
+Access to REST API may be restricted to specific IP addresses after installing the application. 
