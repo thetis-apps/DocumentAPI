@@ -5,16 +5,16 @@ Description: Application that establishes an API suited for working with documen
 # Metadata to use for the publishing to the SAR
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: thetis-ims-yarnliving
+    Name: thetis-ims-document-api
     Description: Application that contains resources specific to Yarnliving
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE.txt
     ReadmeUrl: README.md
     Labels: ['thetis-ims']
-    HomePageUrl: https://github.com/thetis-apps/Yarnliving
+    HomePageUrl: https://github.com/thetis-apps/DocumentApi
     SemanticVersion: 0.0.1
-    SourceCodeUrl: https://github.com/thetis-apps/Yarnliving
+    SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
