@@ -28,6 +28,10 @@ async function getIMS() {
 	let clientSecret = process.env.ClientSecret;  
 	let apiKey = process.env.ApiKey;  
 
+    console.log(clientId + " - " + clientSecret);
+    
+    console.log(apiKey);
+
     let credentials = clientId + ":" + clientSecret;
 	let base64data = Buffer.from(credentials, 'UTF-8').toString('base64');	
 	
@@ -58,38 +62,55 @@ async function getIMS() {
     return ims;
 }
 
+async function extendReplenishmentList(ims, document) {
+    let response = await ims.get('documents/' + document.id);
+    document.globalTradeItemsToReplenish = response.data;
+}
+
+async function extendPurchaseProposal(ims, document) {
+    let response = await ims.get('documents/' + document.id + '/globalTradeItemsToOrder');
+    document.globalTradeItemsToOrder = response.data;
+}
+
+async function extendPutAwayList(ims, document) {
+    let response = await ims.get('documents/' + document.id + '/globalTradeItemLotsToPutAway');
+    document.globalTradeItemLotsToPutAway = response.data;
+}
+
 async function extendMultiPickingList(ims, document) {
-    let response = await ims.get('/documents/' + document.id + '/shipmentLinesToPack');
+    let response = await ims.get('documents/' + document.id + '/shipmentLinesToPack');
     document.shipmentLinesToPack = response.data;
 }
 
+async function getPendingDocuments(ims, documentType, maxNumRows) {
+    let documentFilter = new Object();
+    documentFilter.documentType = documentType;
+    documentFilter.workStatus = 'PENDING';
+    documentFilter.maxNumRows = maxNumRows;
+    documentFilter.onlyNotCancelled = true;
+    let response = await ims.get('documents', { params: documentFilter });
+    return response.data;
+}
+
 exports.getPendingMultiPickingLists = async (event, context) => {
-    
     try {
         
         let ims = await getIMS();
 
-        let documentFilter = new Object();
-        documentFilter.documentType = 'MULTI_PICKING_LIST';
-        documentFilter.workStatus = 'PENDING';
-        documentFilter.maxNumRows = 10;
-        let response = await ims.get('/documents', { params: documentFilter });
-        let documents = response.data;
+        let documents = await getPendingDocuments(ims, 'MULTI_PICKING_LIST', 10);
         
         for (let i = 0; i < documents.length; i++) {
             let document = documents[i];
             await extendMultiPickingList(ims, document);            
         }
 
-        response = {
+        let response = {
             'statusCode': 200,
             'body': JSON.stringify(documents),
             'headers': {
                 'Access-Control-Allow-Origin': '*'
             }
         }
-
-        console.log(response.body);
 
         return response;
         
@@ -100,7 +121,65 @@ exports.getPendingMultiPickingLists = async (event, context) => {
 
 };
 
-exports.putMultiPickingListStatus = async (event, context) => {
+exports.getPendingPutAwayLists = async (event, context) => {
+    try {
+        
+        let ims = await getIMS();
+
+        let documents = await getPendingDocuments(ims, 'PUT_AWAY_LIST', 10);
+        
+        for (let i = 0; i < documents.length; i++) {
+            let document = documents[i];
+            await extendPutAwayList(ims, document);            
+        }
+
+        let response = {
+            'statusCode': 200,
+            'body': JSON.stringify(documents),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
+
+        return response;
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+
+};
+
+exports.getPendingReplenishmentLists = async (event, context) => {
+    try {
+        
+        let ims = await getIMS();
+
+        let documents = await getPendingDocuments(ims, 'REPLENISHMENT_LIST', 10);
+        
+        for (let i = 0; i < documents.length; i++) {
+            let document = documents[i];
+            await extendReplenishmentList(ims, document);            
+        }
+
+        let response = {
+            'statusCode': 200,
+            'body': JSON.stringify(documents),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
+
+        return response;
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+
+};
+
+exports.putMultiPickingList = async (event, context) => {
     
     try {
         
@@ -108,7 +187,9 @@ exports.putMultiPickingListStatus = async (event, context) => {
         
         const documentId = event.pathParameters.id;
         
-        let workStatus = JSON.parse(event.body);
+        let multiPickingList = JSON.parse(event.body);
+        
+        let workStatus = multiPickingList.workStatus;
         
         let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
         let document = response.data;
@@ -130,6 +211,111 @@ exports.putMultiPickingListStatus = async (event, context) => {
     
 };
 
-exports.endWork = async (event, context) => {
+exports.putPutAwayList = async (event, context) => {
+    
+    try {
+        
+        let ims = await getIMS();
+        
+        const documentId = event.pathParameters.id;
+        
+        let putAwayList = JSON.parse(event.body);
+        
+        let workStatus = putAwayList.workStatus;
+        
+        let lots = putAwayList.globalTradeItemLotsToPutAway;
+        for (let lot of lots) {
+            await ims.patch('globalTradeItemLots/' + lot.globalTradeItemLotId, { locationNumber: lot.locationNumber });
+        }
+
+        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
+        let document = response.data;
+        await extendPutAwayList(ims, document);
+        
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify(document),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+        return response;
+    
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
     
 };
+
+exports.putReplenishmentList = async (event, context) => {
+    
+    try {
+        
+        let ims = await getIMS();
+        
+        const documentId = event.pathParameters.id;
+        
+        let replenishmentList = JSON.parse(event.body);
+        
+        let lines = replenishmentList.globalTradeItemsToReplenish;
+        for (let line of lines) {
+            if (line.picked && line.placed) {
+                
+            }
+        }
+        
+        let workStatus = replenishmentList.workStatus;
+        
+        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
+        let document = response.data;
+        await extendReplenishmentList(ims, document);
+        
+        response = {
+            'statusCode': 200,
+            'body': JSON.stringify(document),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+        return response;
+    
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+    
+};
+
+exports.postPutAwayListReport = async (event, context) => {
+
+    try {
+        
+        let ims = await getIMS();
+        
+        let report = JSON.parse(event.body);
+
+        for (let entry of report) {
+            await ims.patch('globalTradeItemLots/' + entry.globalTradeItemLotId, { locationNumber: entry.locationNumber });
+        }
+
+        let response = {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+        return response;
+        
+    } catch (err) {
+        console.log(err);
+        return err;
+    }
+    
+};
+
+exports.postReplenishmentReport = async (event, context) => {
+    
+    
+}
+

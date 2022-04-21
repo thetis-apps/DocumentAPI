@@ -13,13 +13,13 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['thetis-ims']
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 0.0.1
+    SemanticVersion: 1.0.0
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
 
 # Parameters of the application 
 Parameters:
@@ -80,11 +80,11 @@ Resources:
             Path: /pendingMultiPickingLists
             Method: get
             
-  PutMultiPickingListStatus:
+  GetPendingPutAwayLists:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: src/
-      Handler: api.putMultiPickingListStatus
+      Handler: api.getPendingPutAwayLists
       Runtime: nodejs12.x
       Environment:
         Variables:
@@ -100,9 +100,101 @@ Resources:
           Properties:
             RestApiId: 
               Ref: Api
-            Path: /multiPickingLists/{id}/workStatus
+            Path: /pendingPutAwayLists
+            Method: get
+  
+  GetPendingReplenishmentLists:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: api.getPendingReplenishmentLists
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: 
+              Ref: Api
+            Path: /pendingReplenishmentLists
+            Method: get
+            
+  PutMultiPickingList:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: api.putMultiPickingList
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: 
+              Ref: Api
+            Path: /multiPickingLists/{id}
             Method: put
 
+  PutPutAwayList:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: api.putPutAwayList
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: 
+              Ref: Api
+            Path: /putAwayLists/{id}
+            Method: put
+
+  PutReplenishmentList:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: api.putReplenishmentList
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: 
+              Ref: Api
+            Path: /replenishmentLists/{id}
+            Method: put
+            
 Outputs:
   Api:
     Description: "API Gateway endpoint URL for Prod stage for Multi Picking function"

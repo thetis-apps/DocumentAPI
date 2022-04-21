@@ -7,16 +7,16 @@ Metadata:
     Description: Application that contains resources specific to Yarnliving
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
-    LicenseUrl: ../../LICENSE.txt
-    ReadmeUrl: ../../README.md
+    LicenseUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/4612b8d5aa75b9b9936c9b7b9e6c7e82
+    ReadmeUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/40e0e6f7e753aca24edb961977fe8847
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 1.0.0
+    SemanticVersion: '0.0.5'
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 3
 Parameters:
   FrontendUrl:
     Type: String
@@ -54,7 +54,7 @@ Resources:
   GetPendingMultiPickingLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingMultiPickingLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/a2af1f296b56b067c053fa75d2755bca
       Handler: api.getPendingMultiPickingLists
       Runtime: nodejs12.x
       Environment:
@@ -73,11 +73,11 @@ Resources:
               Ref: Api
             Path: /pendingMultiPickingLists
             Method: get
-  GetPendingPutAwayLists:
+  PutMultiPickingListStatus:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingPutAwayLists
-      Handler: api.getPendingPutAwayLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/a2af1f296b56b067c053fa75d2755bca
+      Handler: api.putMultiPickingListStatus
       Runtime: nodejs12.x
       Environment:
         Variables:
@@ -93,95 +93,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: Api
-            Path: /pendingPutAwayLists
-            Method: get
-  GetPendingReplenishmentLists:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: GetPendingReplenishmentLists
-      Handler: api.getPendingReplenishmentLists
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          ClientId:
-            Ref: ClientId
-          ClientSecret:
-            Ref: ClientSecret
-          ApiKey:
-            Ref: ApiKey
-      Events:
-        Request:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: Api
-            Path: /pendingReplenishmentLists
-            Method: get
-  PutMultiPickingList:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: PutMultiPickingList
-      Handler: api.putMultiPickingList
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          ClientId:
-            Ref: ClientId
-          ClientSecret:
-            Ref: ClientSecret
-          ApiKey:
-            Ref: ApiKey
-      Events:
-        Request:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: Api
-            Path: /multiPickingLists/{id}
-            Method: put
-  PutPutAwayList:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: PutPutAwayList
-      Handler: api.putPutAwayList
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          ClientId:
-            Ref: ClientId
-          ClientSecret:
-            Ref: ClientSecret
-          ApiKey:
-            Ref: ApiKey
-      Events:
-        Request:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: Api
-            Path: /putAwayLists/{id}
-            Method: put
-  PutReplenishmentList:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: PutReplenishmentList
-      Handler: api.putReplenishmentList
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          ClientId:
-            Ref: ClientId
-          ClientSecret:
-            Ref: ClientSecret
-          ApiKey:
-            Ref: ApiKey
-      Events:
-        Request:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: Api
-            Path: /replenishmentLists/{id}
+            Path: /multiPickingLists/{id}/workStatus
             Method: put
 Outputs:
   Api:
