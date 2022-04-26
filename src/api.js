@@ -230,7 +230,7 @@ exports.putPutAwayList = async (event, context) => {
         let lots = putAwayList.globalTradeItemLotsToPutAway;
         for (let lot of lots) {
             if (lot.done) {
-                await ims.patch('globalTradeItemLots/' + lot.globalTradeItemLotId, { locationNumber: lot.locationNumber });
+                await ims.patch('globalTradeItemLots/' + lot.id, { locationNumber: lot.globalTradeItemLocationNumber });
             }
         }
 
@@ -342,36 +342,3 @@ exports.putReplenishmentList = async (event, context) => {
     }
     
 };
-
-exports.postPutAwayListReport = async (event, context) => {
-
-    try {
-        
-        let ims = await getIMS();
-        
-        let report = JSON.parse(event.body);
-
-        for (let entry of report) {
-            await ims.patch('globalTradeItemLots/' + entry.globalTradeItemLotId, { locationNumber: entry.locationNumber });
-        }
-
-        let response = {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-        return response;
-        
-    } catch (err) {
-        console.log(err);
-        return err;
-    }
-    
-};
-
-exports.postReplenishmentReport = async (event, context) => {
-    
-    
-}
-
