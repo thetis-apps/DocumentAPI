@@ -12,7 +12,7 @@ Metadata:
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 1.0.2
+    SemanticVersion: 1.1.0
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 Globals:
   Function:
@@ -117,6 +117,28 @@ Resources:
               Ref: Api
             Path: /pendingReplenishmentLists
             Method: get
+  GetPendingStockTakingLists:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetPendingStockTakingLists
+      Handler: api.getPendingStockTakingLists
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /pendingStockTakingLists
+            Method: get
   PutMultiPickingList:
     Type: AWS::Serverless::Function
     Properties:
@@ -182,6 +204,28 @@ Resources:
             RestApiId:
               Ref: Api
             Path: /replenishmentLists/{id}
+            Method: put
+  PutStockTakingList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PutStockTakingList
+      Handler: api.putStockTakingList
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          ClientId:
+            Ref: ClientId
+          ClientSecret:
+            Ref: ClientSecret
+          ApiKey:
+            Ref: ApiKey
+      Events:
+        Request:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /stockTakingLists/{id}
             Method: put
 Outputs:
   Api:

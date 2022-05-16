@@ -6,6 +6,6 @@ codeuri = "src/"
 runtime = "nodejs12.x"
 source_md5 = ""
 packagetype = "Zip"
-functions = ["GetPendingMultiPickingLists", "GetPendingPutAwayLists", "GetPendingReplenishmentLists", "PutMultiPickingList", "PutPutAwayList", "PutReplenishmentList"]
+functions = ["GetPendingMultiPickingLists", "GetPendingPutAwayLists", "GetPendingReplenishmentLists", "GetPendingStockTakingLists", "PutMultiPickingList", "PutPutAwayList", "PutReplenishmentList", "PutStockTakingList"]
 
 [layer_build_definitions]
