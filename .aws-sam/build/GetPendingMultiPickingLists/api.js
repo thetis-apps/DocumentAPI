@@ -85,7 +85,11 @@ async function extendMultiPickingList(ims, document) {
     let response = await ims.get('documents/' + document.id + '/shipmentLinesToPack');
     let lines = response.data;
     for (let line of lines) {
-        line.pickFromLots = JSON.parse(line.pickFromLots);
+        if (line.pickFromLots != null) {
+            line.pickFromLots = JSON.parse(line.pickFromLots);
+        } else {
+            line.pickFromLots = [];
+        }
     }
     document.shipmentLinesToPack = lines;
     
@@ -96,14 +100,30 @@ async function extendStockTakingList(ims, document) {
     document.stockTakingLinesToDo = response.data;
 }
 
-async function getPendingDocuments(ims, documentType, maxNumRows) {
+async function getPendingDocuments(ims, documentType, maxNumRows, extender) {
     let documentFilter = new Object();
     documentFilter.documentType = documentType;
     documentFilter.workStatus = 'PENDING';
     documentFilter.maxNumRows = maxNumRows;
     documentFilter.onlyNotCancelled = true;
     let response = await ims.get('documents', { params: documentFilter });
-    return response.data;
+    
+    let documents = response.data;
+    for (let i = 0; i < documents.length; i++) {
+        let document = documents[i];
+        await extender(ims, document);            
+    }
+
+    response = {
+            'statusCode': 200,
+            'body': JSON.stringify(documents),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+    return response;
+
 }
 
 exports.getPendingMultiPickingLists = async (event, context) => {
@@ -111,23 +131,8 @@ exports.getPendingMultiPickingLists = async (event, context) => {
         
         let ims = await getIMS();
 
-        let documents = await getPendingDocuments(ims, 'MULTI_PICKING_LIST', 10);
-        
-        for (let i = 0; i < documents.length; i++) {
-            let document = documents[i];
-            await extendMultiPickingList(ims, document);            
-        }
+        return await getPendingDocuments(ims, 'MULTI_PICKING_LIST', 10, extendMultiPickingList);            
 
-        let response = {
-            'statusCode': 200,
-            'body': JSON.stringify(documents),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }
-
-        return response;
-        
     } catch (err) {
         console.log(err);
         return err;
@@ -140,22 +145,7 @@ exports.getPendingPutAwayLists = async (event, context) => {
         
         let ims = await getIMS();
 
-        let documents = await getPendingDocuments(ims, 'PUT_AWAY_LIST', 10);
-        
-        for (let i = 0; i < documents.length; i++) {
-            let document = documents[i];
-            await extendPutAwayList(ims, document);            
-        }
-
-        let response = {
-            'statusCode': 200,
-            'body': JSON.stringify(documents),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }
-
-        return response;
+        return await getPendingDocuments(ims, 'PUT_AWAY_LIST', 10, extendPutAwayList);
         
     } catch (err) {
         console.log(err);
@@ -169,22 +159,7 @@ exports.getPendingReplenishmentLists = async (event, context) => {
         
         let ims = await getIMS();
 
-        let documents = await getPendingDocuments(ims, 'REPLENISHMENT_LIST', 10);
-        
-        for (let i = 0; i < documents.length; i++) {
-            let document = documents[i];
-            await extendReplenishmentList(ims, document);            
-        }
-
-        let response = {
-            'statusCode': 200,
-            'body': JSON.stringify(documents),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }
-
-        return response;
+        return await getPendingDocuments(ims, 'REPLENISHMENT_LIST', 10, extendReplenishmentList);
         
     } catch (err) {
         console.log(err);
@@ -198,22 +173,7 @@ exports.getPendingStockTakingLists = async (event, context) => {
         
         let ims = await getIMS();
 
-        let documents = await getPendingDocuments(ims, 'STOCK_TAKING_LIST', 10);
-        
-        for (let i = 0; i < documents.length; i++) {
-            let document = documents[i];
-            await extendStockTakingList(ims, document);            
-        }
-
-        let response = {
-            'statusCode': 200,
-            'body': JSON.stringify(documents),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }
-
-        return response;
+        return await getPendingDocuments(ims, 'STOCK_TAKING_LIST', 10, extendStockTakingList);
         
     } catch (err) {
         console.log(err);
@@ -221,6 +181,34 @@ exports.getPendingStockTakingLists = async (event, context) => {
     }
 
 };
+
+async function putDocumentWorkStatus(ims, document, extender) {
+
+    let workStatus = document.workStatus;
+    
+    let response = await ims.patch('/documents/' + document.id, { workStatus: workStatus }, { validateStatus: function (status) {
+		    return status >= 200 && status < 300 || status == 422; // default
+		}});
+		
+	let body;
+    if (response.status == 422) {
+        body = response.data;
+    } else {
+        body = response.data;
+        await extender(ims, body);
+    }
+    
+    response = {
+            'statusCode': response.status,
+            'body': JSON.stringify(body),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+            
+    return response;
+
+}
 
 exports.putMultiPickingList = async (event, context) => {
     
@@ -232,21 +220,8 @@ exports.putMultiPickingList = async (event, context) => {
         
         let multiPickingList = JSON.parse(event.body);
         
-        let workStatus = multiPickingList.workStatus;
+        return await putDocumentWorkStatus(ims, multiPickingList, extendMultiPickingList);
         
-        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
-        let document = response.data;
-        await extendMultiPickingList(ims, document);
-        
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify(document),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-        return response;
-    
     } catch (err) {
         console.log(err);
         return err;
@@ -260,12 +235,8 @@ exports.putPutAwayList = async (event, context) => {
         
         let ims = await getIMS();
         
-        const documentId = event.pathParameters.id;
-        
         let putAwayList = JSON.parse(event.body);
-        
-        let workStatus = putAwayList.workStatus;
-        
+
         let lots = putAwayList.globalTradeItemLotsToPutAway;
         for (let lot of lots) {
             if (lot.done) {
@@ -273,19 +244,8 @@ exports.putPutAwayList = async (event, context) => {
             }
         }
 
-        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
-        let document = response.data;
-        await extendPutAwayList(ims, document);
-        
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify(document),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-        return response;
-    
+        return await putDocumentWorkStatus(ims, putAwayList, extendPutAwayList);
+
     } catch (err) {
         console.log(err);
         return err;
@@ -298,8 +258,6 @@ exports.putReplenishmentList = async (event, context) => {
     try {
         
         let ims = await getIMS();
-        
-        const documentId = event.pathParameters.id;
         
         let replenishmentList = JSON.parse(event.body);
         
@@ -354,20 +312,7 @@ exports.putReplenishmentList = async (event, context) => {
             }
         }
         
-        let workStatus = replenishmentList.workStatus;
-        
-        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
-        let document = response.data;
-        await extendReplenishmentList(ims, document);
-        
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify(document),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-        return response;
+        return await putDocumentWorkStatus(ims, replenishmentList, extendReplenishmentList);
     
     } catch (err) {
         
@@ -388,11 +333,7 @@ exports.putStockTakingList = async (event, context) => {
         
         let ims = await getIMS();
         
-        const documentId = event.pathParameters.id;
-        
         let stockTakingList = JSON.parse(event.body);
-        
-        let workStatus = stockTakingList.workStatus;
         
         let lines = stockTakingList.stockTakingLinesToDo;
         for (let line of lines) {
@@ -401,18 +342,7 @@ exports.putStockTakingList = async (event, context) => {
             }
         }
 
-        let response = await ims.put('/documents/' + documentId + '/workStatus', workStatus);
-        let document = response.data;
-        await extendPutAwayList(ims, document);
-        
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify(document),
-            'headers': {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
-        return response;
+        return await putDocumentWorkStatus(ims, stockTakingList, extendStockTakingList);
     
     } catch (err) {
         console.log(err);

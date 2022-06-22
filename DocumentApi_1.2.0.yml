@@ -8,8 +8,8 @@ Metadata:
       by Thetis IMS
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
-    LicenseUrl: ../../LICENSE.txt
-    ReadmeUrl: ../../README.md
+    LicenseUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/4612b8d5aa75b9b9936c9b7b9e6c7e82
+    ReadmeUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/40e0e6f7e753aca24edb961977fe8847
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
@@ -55,7 +55,7 @@ Resources:
   GetPendingMultiPickingLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingMultiPickingLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.getPendingMultiPickingLists
       Runtime: nodejs12.x
       Environment:
@@ -77,7 +77,7 @@ Resources:
   GetPendingPutAwayLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingPutAwayLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.getPendingPutAwayLists
       Runtime: nodejs12.x
       Environment:
@@ -99,7 +99,7 @@ Resources:
   GetPendingReplenishmentLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingReplenishmentLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.getPendingReplenishmentLists
       Runtime: nodejs12.x
       Environment:
@@ -121,7 +121,7 @@ Resources:
   GetPendingStockTakingLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingStockTakingLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.getPendingStockTakingLists
       Runtime: nodejs12.x
       Environment:
@@ -143,7 +143,7 @@ Resources:
   PutMultiPickingList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutMultiPickingList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.putMultiPickingList
       Runtime: nodejs12.x
       Environment:
@@ -165,7 +165,7 @@ Resources:
   PutPutAwayList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutPutAwayList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.putPutAwayList
       Runtime: nodejs12.x
       Environment:
@@ -187,7 +187,7 @@ Resources:
   PutReplenishmentList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutReplenishmentList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.putReplenishmentList
       Runtime: nodejs12.x
       Environment:
@@ -209,7 +209,7 @@ Resources:
   PutStockTakingList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutStockTakingList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/eb885053babde35b52bdc3bf607b7cec
       Handler: api.putStockTakingList
       Runtime: nodejs12.x
       Environment:
