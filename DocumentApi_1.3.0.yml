@@ -1,27 +1,23 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Application that establishes an API suited for working with documents
-  
-# Metadata to use for the publishing to the SAR
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: thetis-ims-document-api
-    Description: Application that implements an API for handling documents created by Thetis IMS
+    Description: Application that implements an API for handling documents created
+      by Thetis IMS
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
-    LicenseUrl: LICENSE.txt
-    ReadmeUrl: README.md
-    Labels: ['thetis-ims']
+    LicenseUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/4612b8d5aa75b9b9936c9b7b9e6c7e82
+    ReadmeUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/40e0e6f7e753aca24edb961977fe8847
+    Labels:
+    - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
     SemanticVersion: 1.3.0
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 30
-
-# Parameters of the application 
 Parameters:
   FrontendUrl:
     Type: String
@@ -43,24 +39,23 @@ Parameters:
     Type: String
     MinLength: 1
   DevOpsEmail:
-    Description: The email address to send mail to when messages in the dead letter queue.
+    Description: The email address to send mail to when messages in the dead letter
+      queue.
     Type: String
     MinLength: 4
-
 Resources:
-
   Api:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       Cors:
-        AllowHeaders: "'Access-Control-Allow-Origin,x-requested-with,content-type'"
-        AllowOrigin: !Sub "'${FrontendUrl}'" 
-
+        AllowHeaders: '''Access-Control-Allow-Origin,x-requested-with,content-type'''
+        AllowOrigin:
+          Fn::Sub: '''${FrontendUrl}'''
   GetPendingMultiPickingLists:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.getPendingMultiPickingLists
       Runtime: nodejs12.x
       Environment:
@@ -73,17 +68,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /pendingMultiPickingLists
             Method: get
-            
   GetPendingPutAwayLists:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.getPendingPutAwayLists
       Runtime: nodejs12.x
       Environment:
@@ -96,17 +90,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /pendingPutAwayLists
             Method: get
-  
   GetPendingReplenishmentLists:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.getPendingReplenishmentLists
       Runtime: nodejs12.x
       Environment:
@@ -119,17 +112,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /pendingReplenishmentLists
             Method: get
-
   GetPendingStockTakingLists:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.getPendingStockTakingLists
       Runtime: nodejs12.x
       Environment:
@@ -142,17 +134,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /pendingStockTakingLists
             Method: get
-            
   PutMultiPickingList:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.putMultiPickingList
       Runtime: nodejs12.x
       Environment:
@@ -165,17 +156,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /multiPickingLists/{id}
             Method: put
-
   PutPutAwayList:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.putPutAwayList
       Runtime: nodejs12.x
       Environment:
@@ -188,17 +178,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /putAwayLists/{id}
             Method: put
-
   PutReplenishmentList:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.putReplenishmentList
       Runtime: nodejs12.x
       Environment:
@@ -211,17 +200,16 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /replenishmentLists/{id}
             Method: put
-            
   PutStockTakingList:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/bdff67fab5339fa22fd7d34ef7b849ac
       Handler: api.putStockTakingList
       Runtime: nodejs12.x
       Environment:
@@ -234,14 +222,14 @@ Resources:
             Ref: ApiKey
       Events:
         Request:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
-            RestApiId: 
+            RestApiId:
               Ref: Api
             Path: /stockTakingLists/{id}
             Method: put
-            
 Outputs:
   Api:
-    Description: "API Gateway endpoint URL for Prod stage for Multi Picking function"
-    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+    Description: API Gateway endpoint URL for Prod stage for Multi Picking function
+    Value:
+      Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod

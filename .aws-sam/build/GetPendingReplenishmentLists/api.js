@@ -67,6 +67,10 @@ async function extendReplenishmentList(ims, document) {
     let gtis = response.data;
     for (let gti of gtis) {
         gti.replenishFromLots = JSON.parse(gti.replenishFromLots);
+        for (let lot of gti.replenishFromLots) {
+            lot.lost = false;
+            lot.numItemsReplenished = 
+        }
     }
     document.globalTradeItemsToReplenish = gtis;
 }
@@ -263,8 +267,10 @@ exports.putReplenishmentList = async (event, context) => {
         
         let lines = replenishmentList.globalTradeItemsToReplenish;
         for (let line of lines) {
+            
             let lots = line.replenishFromLots;
             for (let lot of lots) {
+                
                 if (lot.numItemsReplenished > 0) {
                     
                     let lotForPickingId = line.lotForPickingId;
@@ -307,8 +313,18 @@ exports.putReplenishmentList = async (event, context) => {
                     		await ims.post("events/" + replenishmentList.documentCreatedEventId + "/messages", message);
                         }
                     }
-                    
                 }
+                
+                if (lot.lost) {
+                    
+                    let params = new Object();
+                    params.globalTradeItemLotId = lot.id;
+                    params.numItemsCounted = 0;
+                    params.discrepancyCause = lot.discrepancyCause != null ? lot.discrepancyCause : 'SHRINKAGE';
+                    await ims.post("invocations/countGlobalTradeItemLot", params);
+                    
+                }    
+
             }
         }
         
