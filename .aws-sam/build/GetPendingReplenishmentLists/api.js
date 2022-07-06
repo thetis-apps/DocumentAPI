@@ -69,7 +69,7 @@ async function extendReplenishmentList(ims, document) {
         gti.replenishFromLots = JSON.parse(gti.replenishFromLots);
         for (let lot of gti.replenishFromLots) {
             lot.lost = false;
-            lot.numItemsReplenished = 
+            lot.numItemsReplenished = 0;
         }
     }
     document.globalTradeItemsToReplenish = gtis;
