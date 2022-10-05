@@ -8,8 +8,8 @@ Metadata:
       by Thetis IMS
     Author: thetis-apps
     SpdxLicenseId: Apache-2.0
-    LicenseUrl: ../../LICENSE.txt
-    ReadmeUrl: ../../README.md
+    LicenseUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/4612b8d5aa75b9b9936c9b7b9e6c7e82
+    ReadmeUrl: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/40e0e6f7e753aca24edb961977fe8847
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
@@ -53,10 +53,12 @@ Resources:
         AllowHeaders: '''Access-Control-Allow-Origin,x-requested-with,content-type'''
         AllowOrigin:
           Fn::Sub: '''${FrontendUrl}'''
+    Metadata:
+      SamResourceId: Api
   GetPendingMultiPickingLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingMultiPickingLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.getPendingMultiPickingLists
       Environment:
         Variables:
@@ -79,7 +81,7 @@ Resources:
   GetPendingPutAwayLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingPutAwayLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.getPendingPutAwayLists
       Environment:
         Variables:
@@ -102,7 +104,7 @@ Resources:
   GetPendingReplenishmentLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingReplenishmentLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.getPendingReplenishmentLists
       Environment:
         Variables:
@@ -125,7 +127,7 @@ Resources:
   GetPendingStockTakingLists:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetPendingStockTakingLists
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.getPendingStockTakingLists
       Environment:
         Variables:
@@ -148,7 +150,7 @@ Resources:
   PutMultiPickingList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutMultiPickingList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.putMultiPickingList
       Environment:
         Variables:
@@ -171,7 +173,7 @@ Resources:
   PutPutAwayList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutPutAwayList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.putPutAwayList
       Environment:
         Variables:
@@ -194,7 +196,7 @@ Resources:
   PutReplenishmentList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutReplenishmentList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.putReplenishmentList
       Environment:
         Variables:
@@ -217,7 +219,7 @@ Resources:
   PutStockTakingList:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: PutStockTakingList
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3/d588bdb8499dffb52bf82d2992a7207e
       Handler: api.putStockTakingList
       Environment:
         Variables:

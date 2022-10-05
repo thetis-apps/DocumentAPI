@@ -138,8 +138,7 @@ exports.getPendingMultiPickingLists = async (event, context) => {
         return await getPendingDocuments(ims, 'MULTI_PICKING_LIST', 10, extendMultiPickingList);            
 
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
 
 };
@@ -152,8 +151,7 @@ exports.getPendingPutAwayLists = async (event, context) => {
         return await getPendingDocuments(ims, 'PUT_AWAY_LIST', 10, extendPutAwayList);
         
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
 
 };
@@ -166,8 +164,7 @@ exports.getPendingReplenishmentLists = async (event, context) => {
         return await getPendingDocuments(ims, 'REPLENISHMENT_LIST', 10, extendReplenishmentList);
         
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
 
 };
@@ -180,8 +177,7 @@ exports.getPendingStockTakingLists = async (event, context) => {
         return await getPendingDocuments(ims, 'STOCK_TAKING_LIST', 10, extendStockTakingList);
         
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
 
 };
@@ -214,6 +210,17 @@ async function putDocumentWorkStatus(ims, document, extender) {
 
 }
 
+function errorResponse(error) {
+    let response = {
+            'statusCode': 500,
+            'body': JSON.stringify(error),
+            'headers': {
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+    return response;
+}
+
 exports.putMultiPickingList = async (event, context) => {
     
     try {
@@ -227,8 +234,7 @@ exports.putMultiPickingList = async (event, context) => {
         return await putDocumentWorkStatus(ims, multiPickingList, extendMultiPickingList);
         
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
     
 };
@@ -251,8 +257,7 @@ exports.putPutAwayList = async (event, context) => {
         return await putDocumentWorkStatus(ims, putAwayList, extendPutAwayList);
 
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
     
 };
@@ -331,14 +336,7 @@ exports.putReplenishmentList = async (event, context) => {
         return await putDocumentWorkStatus(ims, replenishmentList, extendReplenishmentList);
     
     } catch (err) {
-        
-        // Write to error log
-        
-        // Nothing should be allowed to go wrong!!
-        
-        console.log(err);
-        return err;
-        
+        return errorResponse(err);
     }
     
 };
@@ -361,8 +359,7 @@ exports.putStockTakingList = async (event, context) => {
         return await putDocumentWorkStatus(ims, stockTakingList, extendStockTakingList);
     
     } catch (err) {
-        console.log(err);
-        return err;
+        return errorResponse(err);
     }
     
 };

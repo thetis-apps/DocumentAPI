@@ -7,4 +7,5 @@ s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1q52gionhjeg3"
 s3_prefix = "TestDocumentApi"
 region = "eu-west-1"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "FrontendUrl=\"https://dcc70aea6b5b483a89178ed3b0c87439.vfs.cloud9.eu-west-1.amazonaws.com\" ContextId=\"550\" ClientId=\"ThetisClientId\" ClientSecret=\"ThetisClientSecret\" ApiKey=\"b495480a-181c-4608-ab12-d72977776395\" DevOpsEmail=\"lmp@thetis-apps.com\""
+parameter_overrides = "FrontendUrl=\"https://a569eefa84f44056bbfa22c0b433f364.vfs.cloud9.eu-west-1.amazonaws.com\" ContextId=\"550\" ClientId=\"ThetisClientId\" ClientSecret=\"ThetisClientSecret\" ApiKey=\"b495480a-181c-4608-ab12-d72977776395\" DevOpsEmail=\"lmp@thetis-apps.com\""
+image_repositories = []
