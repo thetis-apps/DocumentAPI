@@ -250,7 +250,22 @@ exports.putPutAwayList = async (event, context) => {
         let lots = putAwayList.globalTradeItemLotsToPutAway;
         for (let lot of lots) {
             if (lot.done) {
-                await ims.patch('globalTradeItemLots/' + lot.id, { locationNumber: lot.globalTradeItemLocationNumber });
+                let params = new Object();
+                params.globalTradeItemLotId = lot.id;
+                params.locationNumber = lot.globalTradeItemLocationNumber;
+                params.numItems = lot.numItemsRemaining;
+                let response = await ims.post('invocations/putAway', params, { validateStatus: function (status) {
+        			    return status >= 200 && status < 300 || status == 422; 
+        			}});
+
+                if (response.status == 422) {
+                    let message = new Object();
+            		message.time = Date.now();
+            		message.source = "DocumentApi";
+            		message.messageType = response.data.messageType;
+            		message.messageText = 'Failed to put away. Reason: ' + response.data.messageText;
+            		await ims.post("events/" + putAwayList.documentCreatedEventId + "/messages", message);
+                }
             }
         }
 
@@ -278,58 +293,24 @@ exports.putReplenishmentList = async (event, context) => {
                 
                 if (lot.numItemsReplenished > 0) {
                     
-                    let lotForPickingId = line.lotForPickingId;
-                    if (lotForPickingId != null && line.replenishToExistingLot) {
-                    
-                        let params = new Object();
-                        params.sourceLotId = lot.id;
-                        params.targetLotId = lotForPickingId;
-                        params.numItems = lot.numItemsReplenished;
-                        let response = await ims.post('invocations/splitToExistingLot', params, { validateStatus: function (status) {
-                			    return status >= 200 && status < 300 || status == 422; 
-                			}});
-                			
-                        if (response.status == 422) {
-                            let message = new Object();
-                    		message.time = Date.now();
-                    		message.source = "DocumentApi";
-                    		message.messageType = response.data.messageType;
-                    		message.messageText = 'Failed to split to existing lot. Reason: ' + response.data.messageText;
-                    		await ims.post("events/" + replenishmentList.documentCreatedEventId + "/messages", message);
-                        }
-
-                    } else {
-                        
-                        let params = new Object();
-                        params.globalTradeItemLotId = lot.id;
-                        params.locationNumber = line.locationNumber;
-                        params.lotStatus = 'SALEABLE';
-                        params.numItems = lot.numItemsReplenished;
-                        let response = await ims.post('invocations/splitToNewLot', params, { validateStatus: function (status) {
-                			    return status >= 200 && status < 300 || status == 422; 
-                			}});
-
-                        if (response.status == 422) {
-                            let message = new Object();
-                    		message.time = Date.now();
-                    		message.source = "DocumentApi";
-                    		message.messageType = response.data.messageType;
-                    		message.messageText = 'Failed to split to new lot. Reason: ' + response.data.messageText;
-                    		await ims.post("events/" + replenishmentList.documentCreatedEventId + "/messages", message);
-                        }
-                    }
-                }
-                
-                if (lot.lost) {
-                    
                     let params = new Object();
-                    params.globalTradeItemLotId = lot.id;
-                    params.numItemsCounted = 0;
-                    params.discrepancyCause = lot.discrepancyCause != null ? lot.discrepancyCause : 'SHRINKAGE';
-                    await ims.post("invocations/countGlobalTradeItemLot", params);
-                    
-                }    
+                    params.globalTradeItemId = line.id;
+                    params.replenishFromLotId = lot.id;
+                    params.numItems = lot.numItemsReplenished;
+                    let response = await ims.post('invocations/replenish', params, { validateStatus: function (status) {
+            			    return status >= 200 && status < 300 || status == 422; 
+            			}});
 
+                    if (response.status == 422) {
+                        let message = new Object();
+                		message.time = Date.now();
+                		message.source = "DocumentApi";
+                		message.messageType = response.data.messageType;
+                		message.messageText = 'Failed to replenish. Reason: ' + response.data.messageText;
+                		await ims.post("events/" + replenishmentList.documentCreatedEventId + "/messages", message);
+                    }
+
+                }
             }
         }
         

@@ -13,7 +13,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['thetis-ims']
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 1.3.2
+    SemanticVersion: 3.0.2
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -24,9 +24,6 @@ Globals:
 
 # Parameters of the application 
 Parameters:
-  FrontendUrl:
-    Type: String
-    Description: The URL at which the frontend is deployed
   ContextId:
     Type: String
     Description: Context that this application is handling events for.
@@ -47,16 +44,33 @@ Parameters:
     Description: The email address to send mail to when messages in the dead letter queue.
     Type: String
     MinLength: 4
+    
+Conditions:
+  IsYarnliving: !Equals 
+    - !Ref ContextId
+    - 628
+  IsCapida: !Equals
+    - !Ref ContextId
+    - 572
 
 Resources:
-
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14  
+      
   Api:
     Type: AWS::Serverless::Api
     Properties:
+      OpenApiVersion: 3.0.1      
       StageName: Prod
       Cors:
         AllowHeaders: "'Access-Control-Allow-Origin,x-requested-with,content-type'"
-        AllowOrigin: !Sub "'${FrontendUrl}'" 
+        AllowOrigin: !If [IsYarnliving, "'https://yarnliving.thetis-apps.net'", !If [IsCapida, "'https://capida.thetis-apps.net'", !Sub "'https://public-${ContextId}.thetis-apps.net'"]]
+      AccessLogSetting:
+        DestinationArn: !GetAtt LogGroup.Arn
+        Format: $context.identity.sourceIp,$context.identity.caller,$context.identity.user,$context.requestTime,$context.httpMethod,$context.resourcePath,$context.protocol,$context.status,$context.responseLength,$context.requestId,$context.extendedRequestId
+      TracingEnabled: true
 
   GetPendingMultiPickingLists:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
