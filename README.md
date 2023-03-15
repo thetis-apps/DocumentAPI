@@ -1,5 +1,8 @@
-# Yarnliving
+# Description
 
-This application contains the backend of the application made for Capida.
+This application provides an API for front-end applications. 
 
-Access to REST API may be restricted to specific IP addresses after installing the application. 
+It offers methods for reading and updating work documents. 
+
+With this API you can create applications that work offline.
+

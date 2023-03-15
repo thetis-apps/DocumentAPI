@@ -16,9 +16,6 @@
  
 const axios = require('axios');
 
-var AWS = require('aws-sdk');
-AWS.config.update({region:'eu-west-1'});
-
 async function getIMS() {
 
     const authUrl = "https://auth.thetis-ims.com/oauth2/";

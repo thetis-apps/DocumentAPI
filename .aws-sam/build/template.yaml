@@ -13,7 +13,7 @@ Metadata:
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 3.0.4
+    SemanticVersion: 3.0.5
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 Globals:
   Function:
