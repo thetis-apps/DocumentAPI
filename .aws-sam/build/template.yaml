@@ -13,7 +13,7 @@ Metadata:
     Labels:
     - thetis-ims
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 3.0.7
+    SemanticVersion: 3.0.8
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 Globals:
   Function:
@@ -32,6 +32,11 @@ Parameters:
     Description: Key of the parameter that has your Thetis client secret as its value.
     Type: AWS::SSM::Parameter::Value<String>
     Default: ThetisClientSecret
+  WebAcl:
+    Description: Key of the parameter that has a WAF to use for publicly exposed endpoints
+      as its value
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: ThetisWebAcl
   ApiKey:
     Description: The api key that gives access to the context in Thetis IMS.
     Type: String
@@ -77,6 +82,13 @@ Resources:
           - Arn
         Format: $context.identity.sourceIp,$context.identity.caller,$context.identity.user,$context.requestTime,$context.httpMethod,$context.resourcePath,$context.protocol,$context.status,$context.responseLength,$context.requestId,$context.extendedRequestId
       TracingEnabled: true
+  WebAclAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis/${Api}/stages/${Api.Stage}
+      WebACLArn:
+        Ref: WebAcl
   GetPendingMultiPickingLists:
     Type: AWS::Serverless::Function
     Properties:
