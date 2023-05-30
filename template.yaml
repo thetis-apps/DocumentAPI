@@ -13,7 +13,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['thetis-ims']
     HomePageUrl: https://github.com/thetis-apps/DocumentApi
-    SemanticVersion: 3.0.8
+    SemanticVersion: 3.0.9
     SourceCodeUrl: https://github.com/thetis-apps/DocumentApi
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -75,7 +75,11 @@ Resources:
         DestinationArn: !GetAtt LogGroup.Arn
         Format: $context.identity.sourceIp,$context.identity.caller,$context.identity.user,$context.requestTime,$context.httpMethod,$context.resourcePath,$context.protocol,$context.status,$context.responseLength,$context.requestId,$context.extendedRequestId
       TracingEnabled: true
-      
+      MethodSettings:
+      - LoggingLevel: ERROR
+        ResourcePath: "/*"
+        HttpMethod: "*"
+        MetricsEnabled: false
   WebAclAssociation:  
     Type: AWS::WAFv2::WebACLAssociation
     Properties: 
