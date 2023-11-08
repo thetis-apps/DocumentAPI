@@ -68,6 +68,7 @@ async function extendReplenishmentList(ims, document) {
             lot.lost = false;
             lot.numItemsReplenished = 0;
         }
+        gti.logisticVariants = JSON.parse(gti.logisticVariants);
     }
     document.globalTradeItemsToReplenish = gtis;
 }
